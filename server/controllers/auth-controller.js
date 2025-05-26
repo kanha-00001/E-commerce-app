@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 //register
@@ -8,6 +8,9 @@ const registerUser = async (req, res) => {
 
 
   try {
+    const checkUser= await User.findOne({email});
+    if(checkUser) return res.json({success:false, return:"user already exist . try with another email"})
+
     const hashPassword = await bcrypt.hash(password, 12);
     const newUser = new User({
       userName,
@@ -30,19 +33,62 @@ const registerUser = async (req, res) => {
 };
 
 
-const login = async (req, res) => {
+const loginUser = async (req, res) => {
+  const {  email, password } = req.body;
+
   try {
+    const checkUser = await User.findOne({email});
+    if(!checkUser){
+      return res.json({
+        success: false,
+        message:"user doesn't exist"
+      })
+    }
+    const checkPasswordMatch = await bcrypt.compare(
+      password,
+      checkUser.password
+    );
+    if (!checkPasswordMatch)
+      return res.json({
+        success: false,
+        message: "Incorrect password! Please try again",
+      });
+
+    const token = jwt.sign(
+      {
+        id: checkUser._id,
+        role: checkUser.role,
+        email: checkUser.email,
+        userName: checkUser.userName,
+      },
+      "CLIENT_SECRET_KEY",
+      { expiresIn: "60m" }
+    );
+    console.log({"this is token":token})
+
+    res.cookie("token", token, { httpOnly: true, secure: false }).json({
+      success: true,
+      message: "Logged in successfully",
+      user: {
+        email: checkUser.email,
+        role: checkUser.role,
+        id: checkUser._id,
+        userName: checkUser.userName,
+      },
+    });
   } catch (e) {
     console.log(e);
-    res.status().json({
+    res.status(500).json({
       success: false,
-      message: "some error ocured",
+      message: "Some error occured",
     });
   }
 };
 
 
-module.exports = { registerUser };
+
+
+module.exports = { registerUser ,loginUser};
 
 
 
