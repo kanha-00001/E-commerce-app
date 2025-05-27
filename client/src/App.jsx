@@ -42,7 +42,7 @@ function App() {
   console.log(isLoading, user, isAuthenticated);
 
   return (
-    <div className="flex flex-col overflow-hidden bg-white">
+    <div className="h-screen w-full">
       <Routes>
         <Route
           path="/auth"

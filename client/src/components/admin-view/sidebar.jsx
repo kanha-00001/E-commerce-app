@@ -33,18 +33,18 @@ function MenuItems({ setOpen }) {
   const navigate = useNavigate();
 
   return (
-    <nav className="mt-8  flex-col flex gap-2">
-      {adminSidebarMenuItems.map((menuItem) => (
+    <nav className="mt-8 flex flex-col gap-2">
+      {adminSidebarMenuItems.map((item) => (
         <div
-          key={menuItem.id}
+          key={item.id}
           onClick={() => {
-            navigate(menuItem.path);
-            setOpen ? setOpen(false) : null;
+            navigate(item.path);
+            setOpen?.(false);
           }}
-          className="flex cursor-pointer text-xl items-center gap-2 rounded-md px-3 py-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="flex items-center gap-2 px-3 py-2 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
         >
-          {menuItem.icon}
-          <span>{menuItem.label}</span>
+          {item.icon}
+          <span>{item.label}</span>
         </div>
       ))}
     </nav>
@@ -56,13 +56,14 @@ function AdminSideBar({ open, setOpen }) {
 
   return (
     <Fragment>
+      {/* Mobile Sidebar */}
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-64">
           <div className="flex flex-col h-full">
             <SheetHeader className="border-b">
               <SheetTitle className="flex gap-2 mt-5 mb-5">
-                <ChartNoAxesCombined size={30} className="my-5" />
-                <div className="text-2xl font-extrabold my-5">Admin Panel</div>
+                <ChartNoAxesCombined size={30} className="mt-5" />
+                <div className="text-2xl font-extrabold mt-5">Admin Panel</div>
               </SheetTitle>
             </SheetHeader>
             <MenuItems setOpen={setOpen} />
@@ -70,11 +71,11 @@ function AdminSideBar({ open, setOpen }) {
         </SheetContent>
       </Sheet>
 
-
-      <aside className="hidden lg:flex w-64 flex-col border-r bg-background p-6 ">
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 flex-col border-r bg-white p-6 h-screen">
         <div
           onClick={() => navigate("/admin/dashboard")}
-          className="flex cursor-pointer items-center gap-2"
+          className="flex items-center gap-2 cursor-pointer"
         >
           <ChartNoAxesCombined size={30} />
           <div className="text-2xl font-extrabold">Admin Panel</div>
