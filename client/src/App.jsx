@@ -16,7 +16,7 @@ import ShoppingListing from "./pages/shopping-view/listing";
 import CheckAuth from "./components/common/check-auth";
 import UnauthPage from "./pages/unauth-page";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { checkAuth } from "./store/auth-slice";
 
@@ -25,18 +25,24 @@ function App() {
     (state) => state.auth
   );
   const dispatch = useDispatch();
+  const [hasCheckedAuth, setHasCheckedAuth] = useState(false);
 
   useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
+    if (!hasCheckedAuth) {
+      dispatch(checkAuth()).finally(() => {
+        setHasCheckedAuth(true);
+      });
+    }
+  }, [dispatch, hasCheckedAuth]);
 
-  if (isLoading) return <Skeleton className="w-[800] bg-black h-[600px]" />;
+  if (isLoading || !hasCheckedAuth) {
+    return <Skeleton className="w-[800] bg-black h-[600px]" />;
+  }
 
-  console.log(isLoading, user);
+  console.log(isLoading, user, isAuthenticated);
 
   return (
     <div className="flex flex-col overflow-hidden bg-white">
-      <h1>header component</h1>
       <Routes>
         <Route
           path="/auth"
@@ -53,7 +59,7 @@ function App() {
         <Route
           path="/admin"
           element={
-            <CheckAuth>
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <AdminLayout />
             </CheckAuth>
           }
@@ -67,14 +73,14 @@ function App() {
         <Route
           path="/shop"
           element={
-            <CheckAuth>
+            <CheckAuth isAuthenticated={isAuthenticated} user={user}>
               <ShoppingLayout />
             </CheckAuth>
           }
         >
           <Route path="account" element={<ShoppingAccount />} />
           <Route path="home" element={<ShoppingHome />} />
-          <Route path="chekout" element={<ShoppingCheckout />} />
+          <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="listing" element={<ShoppingListing />} />
         </Route>
         <Route path="*" element={<NotFound />} />

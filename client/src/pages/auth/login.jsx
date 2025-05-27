@@ -4,6 +4,7 @@ import CommonForm from "@/components/common/form";
 import { loginFormControls } from "@/config";
 import { useDispatch } from "react-redux";
 import { toast } from "sonner";
+import { loginUser } from "@/store/auth-slice";
 
 const initialState = {
   email: "",
@@ -18,21 +19,21 @@ function AuthLogin() {
     event.preventDefault();
     dispatch(loginUser(formData)).then((data) => {
       console.log(data);
-      if(data?.payload?.success){      toast.success("Successfully logged in", {
-        style: {
-          backgroundColor: "#d1fae5", // light green
-          color: "#065f46", // dark green text
-        },
-      });
-    }else{
-            toast.success("some error occurred while logging in", {
-        style: {
-          backgroundColor: "red", // light green
-          color: "black", // dark green text
-        },
-      });
-    }
-
+      if (data?.payload?.success) {
+        toast.success("Successfully logged in", {
+          style: {
+            backgroundColor: "#d1fae5", // light green
+            color: "#065f46", // dark green text
+          },
+        });
+      } else {
+        toast.success("some error occurred while logging in", {
+          style: {
+            backgroundColor: "red", // light green
+            color: "black", // dark green text
+          },
+        });
+      }
     });
   }
 

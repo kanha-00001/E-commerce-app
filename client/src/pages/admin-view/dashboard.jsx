@@ -2,7 +2,7 @@ function AdminDashboard(){
 
     return(
         <div>
-            admin ashbora
+            admin dashboard
         </div>
    )
 }
