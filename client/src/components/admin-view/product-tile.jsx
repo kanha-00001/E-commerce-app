@@ -9,13 +9,13 @@ function AdminProductTile({
   handleDelete,
 }) {
   return (
-    <Card className="w-full max-w-sm mx-auto">
+    <Card className="w-full h-full max-w-sm mx-auto flex flex-col justify-between hover:shadow-lg  transition duration-200">
       <div>
         <div className="relative">
           <img
             src={product.image || null}
             alt={product.title}
-            className="w-full h-[300px] object-cover rounded-t-lg"
+            className="w-full h-[300px] px-3 object-cover rounded-t-lg"
           />
         </div>
         <CardContent>
@@ -25,7 +25,7 @@ function AdminProductTile({
               className={`${
                 product?.salePrice > 0 ? "line-through" : ""
               } text-lg font-semibold text-primary`}
-            > 
+            >
               ${product?.price}
             </span>
             {product?.salePrice > 0 ? (
