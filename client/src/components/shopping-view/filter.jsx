@@ -1,7 +1,7 @@
 import { filterOptions } from "@/config";
 import { Fragment } from "react";
 import { Label } from "../ui/label";
-import { Checkbox } from "../ui/checkbox";
+import {  CustomCheckbox } from "../ui/customcheckbox";
 import { Separator } from "../ui/separator";
 
 function ProductFilter({ filters, handleFilter }) {
@@ -17,8 +17,11 @@ function ProductFilter({ filters, handleFilter }) {
               <h3 className="text-base font-bold">{keyItem}</h3>
               <div className="grid gap-2 mt-2">
                 {filterOptions[keyItem].map((option) => (
-                  <Label className="flex font-medium items-center gap-2 "    key={option.id}>
-                    <Checkbox
+                  <Label
+                    className="flex font-medium items-center gap-2 "
+                    key={option.id}
+                  >
+                    <CustomCheckbox
                       checked={
                         filters &&
                         Object.keys(filters).length > 0 &&
@@ -26,6 +29,11 @@ function ProductFilter({ filters, handleFilter }) {
                         filters[keyItem].indexOf(option.id) > -1
                       }
                       onCheckedChange={() => handleFilter(keyItem, option.id)}
+                      style={{
+                        color: "white",
+                        borderColor: "white",
+                        backgroundColor: "transparent",
+                      }}
                     />
                     {option.label}
                   </Label>
