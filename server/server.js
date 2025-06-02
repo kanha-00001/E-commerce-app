@@ -5,7 +5,7 @@ const cors = require("cors");
 require('dotenv').config();
 const authRouter = require("./routes/auth/auth-routes")
 const adminProductsRouter = require("./routes/admin/product-routes")
-// Correct the connection string
+const ShopProductsRouter = require('./routes/shop/products-routes')
 
 console.log("DB_URL:", process.env.DB_URL);
 
@@ -36,5 +36,5 @@ app.use(cookieParser());
 app.use(express.json());
 app.use("/api/auth", authRouter);
 app.use("/api/admin/products", adminProductsRouter)
-
+app.use("/api/shop/products", ShopProductsRouter)
 app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));
