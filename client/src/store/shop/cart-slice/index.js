@@ -8,20 +8,21 @@ const initialState = {
 
 export const addToCart = createAsyncThunk(
   "cart/addToCart",
-  async ({ userId, productId, quantity }) => {
-    const response = await axios.post(
-      "http://localhost:5000/api/shop/cart/add",
-      {
-        userId,
-        productId,
-        quantity,
-      }
-    );
-
-    return response.data;
+  async ({ userId, productId, quantity }, { rejectWithValue }) => {
+    try {
+      console.log("Sending to backend:", { userId, productId, quantity });
+      const response = await axios.post(
+        "http://localhost:5000/api/shop/cart/add",
+        { userId, productId, quantity },
+        { headers: { "Content-Type": "application/json" } }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Add to cart error:", error.response?.data);
+      return rejectWithValue(error.response?.data);
+    }
   }
 );
-
 export const fetchCartItems = createAsyncThunk(
   "cart/fetchCartItems",
   async (userId) => {

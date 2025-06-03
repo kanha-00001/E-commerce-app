@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
-import { addToCart } from "@/store/shop/cart-slice";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
@@ -48,6 +48,7 @@ function ShoppingListing() {
   const [sort, setSort] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+  const { cartItems } = useSelector((state) => state.shopCart);
 
   function handleSort(value) {
     setSort(value);
@@ -81,20 +82,25 @@ function ShoppingListing() {
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
-  function handleAddtoCart(getCurrentProductId) {
-    console.log(getCurrentProductId);
-    dispatch(
-      addToCart({
-        userId: user?._id,
-        productId: getCurrentProductId,
-        quantity: 1,
-      })
-    ).then((data) => {
-      if (data?.payload?.success) {
-        dispatch(fetchCartItems(user?.id));
-      }
-    });
-  }
+function handleAddtoCart(getCurrentProductId) {
+
+  console.log("Dispatching addToCart with:", {
+    userId: user.id,
+    productId: getCurrentProductId,
+    quantity: 1,
+  });
+  dispatch(
+    addToCart({
+      userId: user.id,
+      productId: getCurrentProductId,
+      quantity: 1,
+    })
+  ).then((data) => {
+    if (data?.payload?.success) {
+      dispatch(fetchCartItems(user.id)); // Use user._id, not user.id
+    }
+  });
+}
 
   useEffect(() => {
     if (productDetails !== null) setOpenDetailsDialog(true);
@@ -120,7 +126,7 @@ function ShoppingListing() {
   }, [dispatch, sort, filters]);
 
 
-
+console.log(cartItems)
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6 p-4 md:p-6">
@@ -162,6 +168,7 @@ function ShoppingListing() {
           {productList && productList.length > 0
             ? productList.map((productItem) => (
                 <ShoppingProductTile
+                key={productItem._id}
                   handleGetProductDetails={handleGetProductDetails}
                   product={productItem}
                   handleAddtoCart={handleAddtoCart}

@@ -50,7 +50,7 @@ function HeaderRightContent() {
     dispatch(fetchCartItems(user?.id));
   }, [dispatch]);
 
-  console.log(cartItems.items)
+
 
   return (
     <div className="flex lg:items-center lg:flex-row flex-col gap-4">
@@ -61,7 +61,7 @@ function HeaderRightContent() {
           size="icon"
           className="relative"
         >
-          <ShoppingCart className="w-6 h-6" />
+          <ShoppingCart className="w-6 h-6 text-white" />
           <span className="absolute top-[-5px] right-[2px] font-bold text-sm">
             {cartItems?.items?.length || 0}
           </span>

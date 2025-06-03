@@ -2,7 +2,7 @@ import React from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../ui/sheet";
 import { Button } from "../ui/button";
 
-function UserCartWrapper(cartItems) {
+function UserCartWrapper({cartItems, setOpenCartSheet}) {
   return (
     <SheetContent className="sm:max-w-md">
       <SheetHeader>
