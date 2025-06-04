@@ -5,10 +5,58 @@ import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { Input } from "../ui/input";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { toast } from "sonner";
+import { setProductDetails } from "@/store/shop/products-slice";
 
 function productDetailsDialog({ open, setOpen, productDetails }) {
+  
+  
+  
+  const dispatch = useDispatch()
+   const { user } = useSelector((state) => state.auth);
+  
+  
+  
+  
+  
+  function handleAddtoCart(getCurrentProductId) {
+
+  console.log("Dispatching addToCart with:", {
+    userId: user.id,
+    productId: getCurrentProductId,
+    quantity: 1,
+  });
+  dispatch(
+    addToCart({
+      userId: user.id,
+      productId: getCurrentProductId,
+      quantity: 1,
+    })
+  ).then((data) => {
+    if (data?.payload?.success) {
+      dispatch(fetchCartItems(user.id)); // Use user._id, not user.id
+    toast.success("product added");
+    }
+  });
+}
+
+  
+  
+  
+  
+  
+  
+  function handleDialogClose() {
+    setOpen(false);
+    dispatch(setProductDetails());
+
+  }
+
+  
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
         <div className="relative overflow-hidden rounded-lg">
           <img
@@ -41,7 +89,7 @@ function productDetailsDialog({ open, setOpen, productDetails }) {
             ) : null}
           </div>
           <div className="my-5 ">
-            <Button className="w-full">Add to cart</Button>
+            <Button className="w-full" onClick={()=>handleAddtoCart(productDetails._id)} >Add to cart</Button>
           </div>
           <Separator />
 
