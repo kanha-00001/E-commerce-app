@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
+import { toast } from "sonner";
 
 function createSearchParamsHelper(filterParams) {
   const queryParams = [];
@@ -98,6 +99,7 @@ function handleAddtoCart(getCurrentProductId) {
   ).then((data) => {
     if (data?.payload?.success) {
       dispatch(fetchCartItems(user.id)); // Use user._id, not user.id
+    toast.success("product added");
     }
   });
 }

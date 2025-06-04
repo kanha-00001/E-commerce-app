@@ -74,9 +74,7 @@ function AdminProducts() {
             setOpenCreateProductsDialog(false);
             setImageFile(null);
             setFormData(initialFormData);
-            toast({
-              title: "Product add successfully",
-            });
+            toast.message("Product add successfully");
           }
         });
   }
