@@ -82,7 +82,7 @@ function UserCartItemsContent({ cartItem }) {
             disabled={cartItem?.quantity === 1}
             onClick={() => handleUpdateQuantity(cartItem, "minus")}
           >
-            <Minus className="w-4 h-4" />
+            <Minus className="w-4 h-4 text-white" />
             <span className="sr-only">Decrease</span>
           </Button>
           <span className="font-semibold">{cartItem?.quantity}</span>
@@ -92,7 +92,7 @@ function UserCartItemsContent({ cartItem }) {
             size="icon"
             onClick={() => handleUpdateQuantity(cartItem, "plus")}
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-white" />
             <span className="sr-only">Decrease</span>
           </Button>
         </div>
