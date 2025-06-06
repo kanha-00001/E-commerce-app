@@ -50,7 +50,7 @@ function ShoppingListing() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
   const { cartItems } = useSelector((state) => state.shopCart);
-
+  const categorySearchParam = searchParams.get("category");
   function handleSort(value) {
     setSort(value);
   }
@@ -118,7 +118,7 @@ function handleAddtoCart(getCurrentProductId) {
   useEffect(() => {
     setSort("price-lowtohigh");
     setFilters(JSON.parse(sessionStorage.getItem("filters")) || {});
-  }, []);
+  }, [categorySearchParam]);
 
   useEffect(() => {
     if (filters !== null && sort !== null)

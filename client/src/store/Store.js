@@ -5,6 +5,7 @@ import shopProductSlice from "./shop/products-slice/index";
 import shopCartSlice from "./shop/cart-slice/index";
 import shopAddressSlice from "./shop/address-slice/index";
 import shopOrderSlice from "./shop/order-slice";
+import adminOrderReducer from "./admin/order-slice";
 
 
 const store = configureStore({
@@ -15,7 +16,8 @@ const store = configureStore({
     shopCart: shopCartSlice,
     shopAddress: shopAddressSlice,
     shopOrder: shopOrderSlice,
-  },
+    adminOrder: adminOrderReducer,
+  }, 
 });
 
 export default store;
