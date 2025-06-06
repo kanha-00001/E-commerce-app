@@ -63,7 +63,6 @@ function ShoppingHome() {
 
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
 
-
   function handleNavigateToListingPage(getCurrentItem, section) {
     sessionStorage.removeItem("filters");
     const currentFilter = {
@@ -92,17 +91,15 @@ function ShoppingHome() {
       })
     ).then((data) => {
       if (data?.payload?.success) {
-        dispatch(fetchCartItems(user.id)); // Use user._id, not user.id
-        toast.success("product added");
+        dispatch(fetchCartItems(user.id)); // Use user.id
+        toast.success("Product added to cart");
       }
     });
   }
 
-
-    useEffect(() => {
+  useEffect(() => {
     if (productDetails !== null) setOpenDetailsDialog(true);
   }, [productDetails]);
-
 
   useEffect(() => {
     dispatch(
@@ -127,17 +124,21 @@ function ShoppingHome() {
         {slides.map((slide, index) => (
           <img
             src={slide}
-            key={index}
+            key={index} // Add key prop using index
             className={`${
               index === currentSlide ? "opacity-100" : "opacity-0"
             } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
+            alt={`Banner ${index + 1}`} // Add alt attribute for accessibility
           />
         ))}
         <Button
           variant="outline"
           size="icon"
           onClick={() =>
-            setCurrentSlide((prevSlide) => (prevSlide - 1) % slides.length)
+            setCurrentSlide(
+              (prevSlide) =>
+                (prevSlide - 1 + slides.length) % slides.length // Fix negative index
+            )
           }
           className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/80"
         >
@@ -158,11 +159,12 @@ function ShoppingHome() {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
-            Shop by category
+            Shop by Category
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {categoriesWithIcon.map((categoryItem) => (
               <Card
+                key={categoryItem.id} // Already has key
                 onClick={() =>
                   handleNavigateToListingPage(categoryItem, "category")
                 }
@@ -184,6 +186,7 @@ function ShoppingHome() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
             {brandsWithIcon.map((brandItem) => (
               <Card
+                key={brandItem.id} // Already has key
                 onClick={() => handleNavigateToListingPage(brandItem, "brand")}
                 className="cursor-pointer hover:shadow-lg transition-shadow"
               >
@@ -200,18 +203,23 @@ function ShoppingHome() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
-            Feature Products
+            Featured Products
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {productList && productList.length > 0
-              ? productList.map((productItem) => (
-                  <ShoppingProductTile
-                    handleGetProductDetails={handleGetProductDetails}
-                    product={productItem}
-                    handleAddtoCart={handleAddtoCart}
-                  />
-                ))
-              : null}
+            {productList && productList.length > 0 ? (
+              productList.map((productItem) => (
+                <ShoppingProductTile
+                  key={productItem._id} // Add key prop using product ID
+                  handleGetProductDetails={handleGetProductDetails}
+                  product={productItem}
+                  handleAddtoCart={handleAddtoCart}
+                />
+              ))
+            ) : (
+              <p className="text-center text-gray-500 col-span-full">
+                No products found.
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -224,4 +232,5 @@ function ShoppingHome() {
     </div>
   );
 }
+
 export default ShoppingHome;
