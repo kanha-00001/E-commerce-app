@@ -83,13 +83,24 @@ function ShoppingListing() {
     dispatch(fetchProductDetails(getCurrentProductId));
   }
 
-function handleAddtoCart(getCurrentProductId) {
+function handleAddtoCart(getCurrentProductId,getTotalStock) {
+    console.log(cartItems);
+    let getCartItems = cartItems.items || [];
 
-  console.log("Dispatching addToCart with:", {
-    userId: user.id,
-    productId: getCurrentProductId,
-    quantity: 1,
-  });
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId === getCurrentProductId
+      );
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > getTotalStock) {
+          toast( `Only ${getQuantity} quantity can be added for this item`
+     );
+
+          return;
+        }
+      }
+    }
   dispatch(
     addToCart({
       userId: user.id,

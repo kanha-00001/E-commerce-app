@@ -11,50 +11,47 @@ import { toast } from "sonner";
 import { setProductDetails } from "@/store/shop/products-slice";
 
 function productDetailsDialog({ open, setOpen, productDetails }) {
-  
-  
-  
-  const dispatch = useDispatch()
-   const { user } = useSelector((state) => state.auth);
-  
-  
-  
-  
-  
-  function handleAddtoCart(getCurrentProductId) {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
-  console.log("Dispatching addToCart with:", {
-    userId: user.id,
-    productId: getCurrentProductId,
-    quantity: 1,
-  });
-  dispatch(
-    addToCart({
-      userId: user.id,
-      productId: getCurrentProductId,
-      quantity: 1,
-    })
-  ).then((data) => {
-    if (data?.payload?.success) {
-      dispatch(fetchCartItems(user.id)); // Use user._id, not user.id
-    toast.success("product added");
+  const { cartItems } = useSelector((state) => state.shopCart);
+
+  function handleAddtoCart(getCurrentProductId, getTotalStock) {
+    console.log(cartItems);
+    let getCartItems = cartItems.items || [];
+
+    if (getCartItems.length) {
+      const indexOfCurrentItem = getCartItems.findIndex(
+        (item) => item.productId === getCurrentProductId
+      );
+      if (indexOfCurrentItem > -1) {
+        const getQuantity = getCartItems[indexOfCurrentItem].quantity;
+        if (getQuantity + 1 > getTotalStock) {
+          toast(`Only ${getQuantity} quantity can be added for this item`);
+
+          return;
+        }
+      }
     }
-  });
-}
+    dispatch(
+      addToCart({
+        userId: user.id,
+        productId: getCurrentProductId,
+        quantity: 1,
+      })
+    ).then((data) => {
+      if (data?.payload?.success) {
+        dispatch(fetchCartItems(user.id)); // Use user._id, not user.id
+        toast.success("product added");
+      }
+    });
+  }
 
-  
-  
-  
-  
-  
-  
   function handleDialogClose() {
     setOpen(false);
     dispatch(setProductDetails());
-
   }
 
-  
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogContent className="grid grid-cols-2 gap-8 sm:p-12 max-w-[90vw] sm:max-w-[80vw] lg:max-w-[70vw]">
@@ -88,8 +85,24 @@ function productDetailsDialog({ open, setOpen, productDetails }) {
               </p>
             ) : null}
           </div>
-          <div className="my-5 ">
-            <Button className="w-full" onClick={()=>handleAddtoCart(productDetails._id)} >Add to cart</Button>
+          <div className="mt-5 mb-5">
+            {productDetails?.totalStock === 0 ? (
+              <Button className="w-full opacity-60 cursor-not-allowed">
+                Out of Stock
+              </Button>
+            ) : (
+              <Button
+                className="w-full"
+                onClick={() =>
+                  handleAddtoCart(
+                    productDetails?._id,
+                    productDetails?.totalStock
+                  )
+                }
+              >
+                Add to Cart
+              </Button>
+            )}
           </div>
           <Separator />
 
@@ -103,23 +116,19 @@ function productDetailsDialog({ open, setOpen, productDetails }) {
 
                 <div className="grid gap-1">
                   <div className="flex items-center gap-2">
-
-                                            <h3 className="font-bold">kanha</h3>
-
+                    <h3 className="font-bold">kanha</h3>
                   </div>
-                      <div className="flex items-center gap-0.5">
-
-
-
-
-                  </div>
-                  <p className="text-muted-foreground"> this is an awesome product</p>
+                  <div className="flex items-center gap-0.5"></div>
+                  <p className="text-muted-foreground">
+                    {" "}
+                    this is an awesome product
+                  </p>
                 </div>
               </div>
             </div>
             <div className="mt-10 flex-col flex gap-2">
-                <Input placeholder="write a review" />
-                <Button>submit</Button>
+              <Input placeholder="write a review" />
+              <Button>submit</Button>
             </div>
           </div>
         </div>
