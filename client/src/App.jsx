@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { checkAuth } from "./store/auth-slice";
+import SearchProducts from "./pages/shopping-view/search";
 
 function App() {
   const { user, isAuthenticated, isLoading } = useSelector(
@@ -82,6 +83,7 @@ function App() {
           <Route path="home" element={<ShoppingHome />} />
           <Route path="checkout" element={<ShoppingCheckout />} />
           <Route path="listing" element={<ShoppingListing />} />
+          <Route path="search" element={<SearchProducts/>} />
         </Route>
         <Route path="*" element={<NotFound />} />
         <Route path="/unauth-page" element={<UnauthPage />} />

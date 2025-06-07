@@ -11,7 +11,7 @@ const shopAddressRouter = require("./routes/shop/address-route");
 const shopOrderRouter = require("./routes/shop/order-route");
 const adminOrderRouter = require("./routes/admin/order-routes");
 
-
+const shopSearchRouter = require("./routes/shop/search-route");
 
 console.log("DB_URL:", process.env.DB_URL);
 
@@ -47,6 +47,7 @@ app.use("/api/shop/cart", shopCartRouter)
 app.use("/api/shop/address", shopAddressRouter);
 app.use("/api/shop/order", shopOrderRouter);
 app.use("/api/admin/orders", adminOrderRouter);
+app.use("/api/shop/search", shopSearchRouter);
 
 
 
