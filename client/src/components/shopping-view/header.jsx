@@ -1,10 +1,14 @@
 import { HousePlug, LogOut, Menu, ShoppingCart, UserCog } from "lucide-react";
-import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Link,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { useDispatch, useSelector } from "react-redux";
 import { shoppingViewHeaderMenuItems } from "@/config";
-import { Label } from "../ui/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,11 +22,10 @@ import { logoutUser } from "@/store/auth-slice";
 import UserCartWrapper from "./cart-wrapper";
 import { useEffect, useState } from "react";
 import { fetchCartItems } from "@/store/shop/cart-slice";
+import { Label } from "../ui/label";
 
 function MenuItems() {
-
-
- const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -46,7 +49,6 @@ function MenuItems() {
       : navigate(getCurrentMenuItem.path);
   }
 
-
   return (
     <nav className="flex flex-col mb-3 mx -3 lg:mb-0 lg:items-center gap-6 lg:flex-row">
       {shoppingViewHeaderMenuItems.map((menuItem) => (
@@ -64,16 +66,16 @@ function MenuItems() {
 
 function HeaderRightContent() {
   const { user } = useSelector((state) => state.auth);
+  const { cartItems } = useSelector((state) => state.shopCart);
   const [openCartSheet, setOpenCartSheet] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { cartItems } = useSelector((state) => state.shopCart);
 
   function handleLogout() {
     dispatch(logoutUser());
   }
 
-    useEffect(() => {
+  useEffect(() => {
     dispatch(fetchCartItems(user?.id));
   }, [dispatch]);
 

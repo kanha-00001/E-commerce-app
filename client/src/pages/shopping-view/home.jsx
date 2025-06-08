@@ -31,13 +31,14 @@ import { useNavigate } from "react-router-dom";
 import { addToCart, fetchCartItems } from "@/store/shop/cart-slice";
 import ProductDetailsDialog from "@/components/shopping-view/product-details";
 import { toast } from "sonner";
+import { getFeatureImages } from "@/store/common-slice";
 
 const categoriesWithIcon = [
   { id: "men", label: "Men", icon: ShirtIcon },
-  { id: "women", label: "Women", icon: Newspaper },
+  { id: "women", label: "Women", icon: CloudLightning },
   { id: "kids", label: "Kids", icon: BabyIcon },
   { id: "accessories", label: "Accessories", icon: WatchIcon },
-  { id: "footwear", label: "Footwear", icon: Footprints },
+  { id: "footwear", label: "Footwear", icon: UmbrellaIcon },
 ];
 
 const brandsWithIcon = [
@@ -48,20 +49,19 @@ const brandsWithIcon = [
   { id: "zara", label: "Zara", icon: Images },
   { id: "h&m", label: "H&M", icon: Heater },
 ];
-
-const slides = [bannerOne, bannerTwo, bannerThree];
-
 function ShoppingHome() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const { productList, productDetails } = useSelector(
     (state) => state.shopProducts
   );
-
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const { featureImageList } = useSelector((state) => state.commonFeature);
 
   const [openDetailsDialog, setOpenDetailsDialog] = useState(false);
+
+  const { user } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   function handleNavigateToListingPage(getCurrentItem, section) {
     sessionStorage.removeItem("filters");
@@ -78,14 +78,9 @@ function ShoppingHome() {
   }
 
   function handleAddtoCart(getCurrentProductId) {
-    console.log("Dispatching addToCart with:", {
-      userId: user.id,
-      productId: getCurrentProductId,
-      quantity: 1,
-    });
     dispatch(
       addToCart({
-        userId: user.id,
+        userId: user?.id,
         productId: getCurrentProductId,
         quantity: 1,
       })
@@ -102,6 +97,14 @@ function ShoppingHome() {
   }, [productDetails]);
 
   useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % featureImageList.length);
+    }, 15000);
+
+    return () => clearInterval(timer);
+  }, [featureImageList]);
+
+  useEffect(() => {
     dispatch(
       fetchAllFilteredProducts({
         filterParams: {},
@@ -110,34 +113,34 @@ function ShoppingHome() {
     );
   }, [dispatch]);
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length);
-    }, 3000);
+  console.log(productList, "productList");
 
-    return () => clearInterval(timer);
-  }, [slides]);
+  useEffect(() => {
+    dispatch(getFeatureImages());
+  }, [dispatch]);
 
   return (
     <div className="flex flex-col min-h-screen">
       <div className="relative w-full h-[600px] overflow-hidden">
-        {slides.map((slide, index) => (
-          <img
-            src={slide}
-            key={index} // Add key prop using index
-            className={`${
-              index === currentSlide ? "opacity-100" : "opacity-0"
-            } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
-            alt={`Banner ${index + 1}`} // Add alt attribute for accessibility
-          />
-        ))}
+        {featureImageList && featureImageList.length > 0
+          ? featureImageList.map((slide, index) => (
+              <img
+                src={slide?.image}
+                key={index}
+                className={`${
+                  index === currentSlide ? "opacity-100" : "opacity-0"
+                } absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-1000`}
+              />
+            ))
+          : null}
         <Button
           variant="outline"
           size="icon"
           onClick={() =>
             setCurrentSlide(
               (prevSlide) =>
-                (prevSlide - 1 + slides.length) % slides.length // Fix negative index
+                (prevSlide - 1 + featureImageList.length) %
+                featureImageList.length
             )
           }
           className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-white/80"
@@ -148,7 +151,9 @@ function ShoppingHome() {
           variant="outline"
           size="icon"
           onClick={() =>
-            setCurrentSlide((prevSlide) => (prevSlide + 1) % slides.length)
+            setCurrentSlide(
+              (prevSlide) => (prevSlide + 1) % featureImageList.length
+            )
           }
           className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white/80"
         >
@@ -203,18 +208,18 @@ function ShoppingHome() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-8">
-            Featured Products
+            Feature Products
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {productList && productList.length > 0 ? (
               productList.map((productItem) => (
-                <ShoppingProductTile
+                  <ShoppingProductTile
                   key={productItem._id} // Add key prop using product ID
-                  handleGetProductDetails={handleGetProductDetails}
-                  product={productItem}
-                  handleAddtoCart={handleAddtoCart}
-                />
-              ))
+                    handleGetProductDetails={handleGetProductDetails}
+                    product={productItem}
+                    handleAddtoCart={handleAddtoCart}
+                  />
+                ))
             ) : (
               <p className="text-center text-gray-500 col-span-full">
                 No products found.
@@ -223,7 +228,6 @@ function ShoppingHome() {
           </div>
         </div>
       </section>
-
       <ProductDetailsDialog
         open={openDetailsDialog}
         setOpen={setOpenDetailsDialog}

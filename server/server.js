@@ -13,6 +13,7 @@ const adminOrderRouter = require("./routes/admin/order-routes");
 const shopReviewRouter = require("./routes/shop/review-route");
 
 const shopSearchRouter = require("./routes/shop/search-route");
+const commonFeatureRouter = require("./routes/common/feature-route");
 
 console.log("DB_URL:", process.env.DB_URL);
 
@@ -52,5 +53,6 @@ app.use("/api/shop/search", shopSearchRouter);
 
 app.use("/api/shop/review", shopReviewRouter);
 
+app.use("/api/common/feature", commonFeatureRouter);
 
 app.listen(PORT, () => console.log(`Server is now running on port ${PORT}`));
